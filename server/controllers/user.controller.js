@@ -1,4 +1,4 @@
-import { comparePassword, hashPassword } from "../utils/password.utils";
+import { comparePassword, hashPassword } from "../utils/password.utils.js";
 import User from "../models/user.model.js";
 import { generateToken, tokenOptions } from "../utils/token.utils.js";
 
@@ -14,14 +14,13 @@ export const registerUser = async (req, res) => {
     // Hash the password
     const hashedPassword = await hashPassword(password);
 
-    // get tokens
-
     // Create new user
-    const newUser = new User({
+    const newUser = await User.create({
       username,
       email,
       password: hashedPassword,
     });
+
     const tokens = await generateToken(newUser._id);
 
     await newUser.save();
@@ -44,14 +43,19 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
     const isPasswordValid = await comparePassword(password, user.password);
+
     if (!isPasswordValid) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
+
     const tokens = await generateToken(user._id);
+
     res
       .cookie("accessToken", tokens.accessToken, tokenOptions)
       .cookie("refreshToken", tokens.refreshToken, tokenOptions);
-    return res.status(200).json({ message: "Login successful" });
+    res.status(200).json({ message: "Login successful" });
+    console.log("Login successful for user:", user._id);
+    return;
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
   }
@@ -60,6 +64,7 @@ export const loginUser = async (req, res) => {
 export const getUserProfile = async (req, res) => {
   try {
     const userId = req.userId;
+
     const user = await User.findById(userId).select("-password");
     if (!user) {
       return res.status(404).json({ error: "User not found" });

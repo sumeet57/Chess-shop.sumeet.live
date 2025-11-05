@@ -6,16 +6,8 @@ export const tokenOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 export const generateToken = (userId) => {
-  const accessToken = jwt.sign(
-    { id: userId },
-    process.env.JWT_SECRET,
-    tokenOptions
-  );
-  const refreshToken = jwt.sign(
-    { id: userId },
-    process.env.JWT_SECRET,
-    tokenOptions
-  );
+  const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET);
+  const refreshToken = jwt.sign({ id: userId }, process.env.JWT_SECRET);
   return { accessToken, refreshToken };
 };
 

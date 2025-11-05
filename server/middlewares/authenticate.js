@@ -1,4 +1,8 @@
-import { generateToken, tokenOptions, verifyToken } from "../utils/token.utils";
+import {
+  generateToken,
+  tokenOptions,
+  verifyToken,
+} from "../utils/token.utils.js";
 
 export const authenticate = async (req, res, next) => {
   try {

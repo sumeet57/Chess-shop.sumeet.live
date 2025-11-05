@@ -1,9 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config();
 import app from "./app.js";
 import { Server } from "socket.io";
 // const port = process.env.PORT || 5000;
 import http from "http";
 import SocketManager from "./services/socketManager.js";
 const server = http.createServer(app);
+
+import { connectDB } from "./config/db.js";
+connectDB();
 
 const io = new Server(server, {
   cors: {
